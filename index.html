@@ -239,13 +239,7 @@
     // ===== Fake live feed lines =====
     const feed = document.getElementById('feed');
     const lines = [
-      '[ok] index: building subject graph…',
-      '[ok] fetched: btech/cse/dsp/unit-2.pdf',
-      '[ok] fetched: nursing/anatomy/viva-questions.docx',
-      '[ok] fetched: ba/english/poetry-forms-notes.pdf',
-      '[ok] fetched: bsc/chemistry/titration-lab-manual.pdf',
-      '[ok] cache: 124 resources ready.',
-      '[ok] search ready: try "DBMS ER Diagrams"',
+     
     ];
     let i=0; const feedTimer=setInterval(()=>{ if(i<lines.length){ feed.textContent += (i? '\n':'') + lines[i++]; feed.scrollTop = feed.scrollHeight; } else { clearInterval(feedTimer) } }, 700);
 
@@ -265,3 +259,4 @@
   </script>
 </body>
 </html>
+
