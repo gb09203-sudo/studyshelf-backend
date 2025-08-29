@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyShelf.in — Notes • Assignments • Projects • Lab Manuals</title>
+  <meta name="description" content="StudyShelf.in — B.Tech, B.Sc, BA, Nursing notes, assignments, projects, and lab manuals." />
+  <style>
+    :root{
+      --bg:#050505; /* near-black */
+      --bg-deep:#000000; 
+      --neon:#18ff6d; /* hacker green */
+      --neon-dim:#0bb853;
+      --text:#d1d5db;
+      --muted:#9ca3af;
+      --card:#0b0f0c;
+      --card-border:#0f1a13;
+      --accent:#18ff6d;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background: radial-gradient(1200px 700px at 50% 50%, #061006 0%, var(--bg) 40%, var(--bg-deep) 100%);
+      color:var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      overflow-x:hidden;
+    }
+    a{color:var(--neon); text-decoration:none}
+    /* ===== SPLASH (5s) ===== */
+    #splash{
+      position:fixed; inset:0; z-index:9999; background:#000;
+    }
+    #matrixCanvas{ position:absolute; inset:0; width:100%; height:100%; display:block; background:linear-gradient(180deg,#000 0%, #031a0e 100%); }
+    .splash-overlay{
+      position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px;
+    }
+    .logo{
+      font-weight:800; letter-spacing:0.03em; text-transform:lowercase; font-size: clamp(32px, 6vw, 72px);
+      color:var(--neon); filter: drop-shadow(0 0 12px rgba(24,255,109,.6));
+      position:relative; isolation:isolate;
+    }
+    .logo::after{ /* scanline */
+      content:""; position:absolute; left:-10%; right:-10%; top:50%; height:1px; background:linear-gradient(90deg, transparent, rgba(24,255,109,.9), transparent);
+      transform:translateY(-50%); mix-blend-mode:screen; animation:scan 2.2s linear infinite;
+    }
+    @keyframes scan { 0%{transform:translateY(-180%)} 100%{transform:translateY(180%)} }
+
+    .glitch{
+      position:relative; display:inline-block;
+      text-shadow: -2px 0 rgba(24,255,109,.6), 2px 0 rgba(11,184,83,.6);
+      animation:glitch 1.6s infinite;
+    }
+    @keyframes glitch { 
+      0%{ transform:skew(0deg) } 20%{ transform:skew(1deg) } 21%{ transform:skew(-1deg) } 22%{ transform:skew(0deg) } 
+      60%{ filter:hue-rotate(0deg) } 61%{ filter:hue-rotate(15deg) } 62%{ filter:hue-rotate(0deg) }
+    }
+
+    .subtitle{ color:var(--muted); font-size:clamp(14px, 2.5vw, 18px); letter-spacing:.2em; text-transform:uppercase; opacity:.9 }
+    .typewriter{ border-right:2px solid var(--neon); white-space:nowrap; overflow:hidden; width:0; animation: typing 3.5s steps(32,end) forwards, blink 700ms step-end infinite; }
+    @keyframes typing { to{ width: 32ch } }
+    @keyframes blink { 50%{ border-color: transparent } }
+
+    .progress{
+      width:min(360px, 70vw); height:6px; background:#052412; border-radius:999px; overflow:hidden; box-shadow:inset 0 0 0 1px #0b3a1e;
+    }
+    .bar{ height:100%; width:0%; background:linear-gradient(90deg, #0bb853, #18ff6d); animation: load 4.2s ease-in-out forwards; }
+    @keyframes load { 0%{width:0%} 100%{width:100%} }
+
+    .fadeOut{ animation: fadeout 0.9s ease forwards }
+    @keyframes fadeout { to{ opacity:0; visibility:hidden } }
+
+    /* ===== MAIN LAYOUT ===== */
+    header{
+      position:sticky; top:0; z-index:10; backdrop-filter: blur(6px);
+      background: linear-gradient(180deg, rgba(0,0,0,.8) 0%, rgba(0,0,0,.4) 100%);
+      border-bottom:1px solid #0c2216;
+    }
+    .container{ width: min(1200px, 92vw); margin: 0 auto; }
+    .nav{ display:flex; align-items:center; justify-content:space-between; padding:14px 0; }
+    .brand{ display:flex; align-items:center; gap:10px; font-weight:800; color:var(--neon) }
+    .badge{ font-size:11px; border:1px solid #134d2c; padding:2px 8px; border-radius:999px; color:#9ef7bf; }
+    .search{ position:relative; flex:1; margin:0 16px; }
+    .search input{
+      width:100%; padding:12px 14px 12px 38px; border-radius:12px; border:1px solid #113a22; outline:none; background:#07150d; color:var(--text);
+      box-shadow: inset 0 0 0 1px #0b2718;
+    }
+    .search svg{ position:absolute; left:10px; top:50%; transform:translateY(-50%); opacity:.7 }
+
+    main{ padding:32px 0 60px }
+    .hero{
+      display:grid; grid-template-columns: 1.1fr .9fr; gap:28px; align-items:center; padding: 24px 0 6px;
+    }
+    @media (max-width: 900px){ .hero{ grid-template-columns:1fr; } }
+
+    .hero h1{ font-size: clamp(28px, 4.8vw, 48px); margin:0; line-height:1.15; }
+    .hero p{ color:var(--muted); margin:10px 0 18px }
+    .cta{ display:flex; gap:10px; flex-wrap:wrap }
+    .btn{
+      padding:12px 16px; border-radius:12px; border:1px solid #134d2c; background:#0a2013; color:#c7f9d4; cursor:pointer; font-weight:600;
+      transition: transform .12s ease, box-shadow .12s ease; box-shadow: 0 0 0 0 rgba(24,255,109,0.4);
+    }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 6px 18px -6px rgba(24,255,109,0.25); }
+    .btn.primary{ background:linear-gradient(90deg,#0bb853,#18ff6d); color:#03250f; border-color:#19ff6d }
+
+    .panel{
+      background: linear-gradient(180deg, #060c08, #070f0a); border:1px solid var(--card-border); border-radius:16px; padding:16px; position:relative; overflow:hidden;
+    }
+    .panel::before{ content:""; position:absolute; inset:-1px; border-radius:16px; padding:1px; background: radial-gradient(600px 120px at 10% -10%, rgba(24,255,109,.1), transparent 50%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+
+    .grid{ display:grid; grid-template-columns: repeat(4,1fr); gap:16px }
+    @media (max-width:1100px){ .grid{ grid-template-columns: repeat(2,1fr); } }
+    @media (max-width:640px){ .grid{ grid-template-columns: 1fr; } }
+
+    .card{ background:var(--card); border:1px solid var(--card-border); border-radius:16px; padding:16px; display:flex; flex-direction:column; gap:10px; }
+    .card h3{ margin:0; color:#e7ffee }
+    .pill{ display:inline-flex; gap:6px; flex-wrap:wrap }
+    .pill span{ font-size:12px; border:1px solid #134d2c; color:#8becb0; padding:4px 8px; border-radius:999px }
+
+    footer{ border-top:1px solid #0c2216; color:#6b7280; padding:24px 0 60px; text-align:center; }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace }
+  </style>
+</head>
+<body>
+  <!-- ====== 5s HACKER SPLASH ====== -->
+  <div id="splash" aria-label="Loading">
+    <canvas id="matrixCanvas"></canvas>
+    <div class="splash-overlay">
+      <div class="logo mono glitch">studyshelf<span style="opacity:.75">.in</span></div>
+      <div class="subtitle mono typewriter">initializing • loading resources • preparing notes index</div>
+      <div class="progress" aria-hidden="true"><div class="bar"></div></div>
+    </div>
+  </div>
+
+  <!-- ====== HEADER ====== -->
+  <header>
+    <div class="container nav">
+      <div class="brand mono"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6h18M6 12h12M9 18h6" stroke="#18ff6d" stroke-width="2" stroke-linecap="round"/></svg> StudyShelf<span style="opacity:.6">.in</span><span class="badge">beta</span></div>
+      <div class="search">
+        <input id="search" type="search" placeholder="Search notes, assignments, projects… (e.g., B.Tech DSP Unit 2)" />
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="7" stroke="#9ca3af" stroke-width="2"/><path d="M20 20l-3.2-3.2" stroke="#9ca3af" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <a href="#upload" class="btn">+ Upload</a>
+    </div>
+    
+  </header>
+
+  <!-- ====== MAIN ====== -->
+  <main class="container">
+    <section class="hero">
+      <div>
+        <h1 class="mono">Your study shelf for <span style="color:var(--neon)">Notes</span>, <span style="color:var(--neon)">Assignments</span>, <span style="color:var(--neon)">Projects</span> & <span style="color:var(--neon)">Lab Manuals</span>.</h1>
+        <p>Curated resources for B.Tech • B.Sc • BA • Nursing — fast, organized, downloadable.</p>
+        <div class="cta">
+          <a class="btn primary" href="#notes">Browse Notes</a>
+          <a class="btn" href="#request">Request a Resource</a>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="mono" style="font-size:12px; opacity:.8">live feed</div>
+        <pre class="mono" id="feed" style="margin:6px 0 0; max-height:200px; overflow:auto; font-size:12px; line-height:1.4"></pre>
+      </div>
+    </section>
+
+    <section id="notes" style="margin-top:24px">
+      <div class="grid">
+        <div class="card">
+          <h3>Notes</h3>
+          <p class="mono" style="color:var(--muted)">Unit-wise PDFs, exam-focused summaries.</p>
+          <div class="pill"><span>B.Tech</span><span>B.Sc</span><span>BA</span><span>Nursing</span></div>
+          <a class="btn" href="#">Explore Notes</a>
+        </div>
+        <div class="card">
+          <h3>Assignments</h3>
+          <p class="mono" style="color:var(--muted)">Ready-to-submit formats with references.</p>
+          <div class="pill"><span>Latest</span><span>Templates</span><span>Rubrics</span></div>
+          <a class="btn" href="#">See Assignments</a>
+        </div>
+        <div class="card">
+          <h3>Projects</h3>
+          <p class="mono" style="color:var(--muted)">Mini + major projects with abstracts & code.</p>
+          <div class="pill"><span>CS/IT</span><span>ECE</span><span>EEE</span><span>ME</span></div>
+          <a class="btn" href="#">Browse Projects</a>
+        </div>
+        <div class="card">
+          <h3>Lab Manuals</h3>
+          <p class="mono" style="color:var(--muted)">Experiment steps, observations & viva Qs.</p>
+          <div class="pill"><span>Physics</span><span>Chemistry</span><span>Programming</span></div>
+          <a class="btn" href="#">Open Lab Manuals</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container mono">
+      © <span id="year"></span> StudyShelf.in • Made for students • <a href="#">Contact</a>
+    </div>
+  </footer>
+
+  <script>
+    // ===== MATRIX RAIN (Hacker green) =====
+    const canvas = document.getElementById('matrixCanvas');
+    const ctx = canvas.getContext('2d');
+    let w, h, cols, drops, fontSize;
+
+    function resize(){
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+      fontSize = Math.max(14, Math.floor(w/90));
+      cols = Math.floor(w / fontSize);
+      drops = Array(cols).fill(1 + Math.random()*h/2);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    const chars = 'アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz#$%&*+-/<>'.split('');
+
+    function draw(){
+      // translucent background to create trailing effect
+      ctx.fillStyle = 'rgba(0, 10, 5, 0.15)';
+      ctx.fillRect(0,0,w,h);
+
+      ctx.fillStyle = '#18ff6d';
+      ctx.font = fontSize + 'px monospace';
+
+      for(let i=0;i<drops.length;i++){
+        const text = chars[Math.floor(Math.random()*chars.length)];
+        const x = i*fontSize;
+        const y = drops[i]*fontSize;
+        ctx.fillText(text, x, y);
+
+        if(y > h && Math.random() > 0.975){ drops[i] = 0; }
+        drops[i]++;
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+
+    // ===== Fake live feed lines =====
+    const feed = document.getElementById('feed');
+    const lines = [
+      '[ok] index: building subject graph…',
+      '[ok] fetched: btech/cse/dsp/unit-2.pdf',
+      '[ok] fetched: nursing/anatomy/viva-questions.docx',
+      '[ok] fetched: ba/english/poetry-forms-notes.pdf',
+      '[ok] fetched: bsc/chemistry/titration-lab-manual.pdf',
+      '[ok] cache: 124 resources ready.',
+      '[ok] search ready: try "DBMS ER Diagrams"',
+    ];
+    let i=0; const feedTimer=setInterval(()=>{ if(i<lines.length){ feed.textContent += (i? '\n':'') + lines[i++]; feed.scrollTop = feed.scrollHeight; } else { clearInterval(feedTimer) } }, 700);
+
+    // ===== Splash -> Main after 5s =====
+    const splash = document.getElementById('splash');
+    setTimeout(()=>{ splash.classList.add('fadeOut'); setTimeout(()=>{ splash.style.display='none'; }, 1000); }, 5000);
+
+    // year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // simple search handler (client-side placeholder)
+    document.getElementById('search').addEventListener('keydown', (e)=>{
+      if(e.key==='Enter'){
+        alert('Searching for: ' + e.target.value + '\n(Connect to your backend or index later)');
+      }
+    })
+  </script>
+</body>
+</html>
