@@ -1,0 +1,52 @@
+/* Loader styles */
+#loader {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  z-index: 9999;
+}
+
+#matrix {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+}
+
+.loading-text {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #18ff6d;
+  font-family: monospace;
+}
+
+.loading-text h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.progress {
+  width: 200px;
+  height: 8px;
+  background: #222;
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 10px auto;
+}
+
+.progress div {
+  height: 100%;
+  width: 0;
+  background: #18ff6d;
+  animation: loadBar 3s linear forwards;
+}
+
+@keyframes loadBar {
+  to { width: 100%; }
+}
